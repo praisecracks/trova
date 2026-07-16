@@ -827,8 +827,6 @@ export default function BuyerTrackingPublic({
              </button>
              </div>
            </div>
-
-           {showRatingModal && renderRatingModal()}
           </div>
          );
    }
@@ -1596,9 +1594,9 @@ export default function BuyerTrackingPublic({
                       {transaction.sellerKycStatus === 'verified' && (
                         <span className="text-[10px] text-emerald-400 font-bold">Verified</span>
                       )}
-                      {transaction.ratingCount > 0 && (
+                      {(transaction.ratingCount ?? 0) > 0 && (
                         <span className="text-[10px] text-amber-400 font-bold ml-1">
-                          ★ {transaction.ratingAverage} · {transaction.ratingCount}
+                          ★ {transaction.ratingAverage ?? 0} · {transaction.ratingCount ?? 0}
                         </span>
                       )}
                    </div>
