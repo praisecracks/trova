@@ -452,6 +452,34 @@ export default function BuyerTrackingPublic({
     onNavigateToLanding();
   }, [markCompletedLeft, onNavigateToLanding]);
 
+  const handleSkipRating = () => {
+    console.log('[Rating] Skipped by user');
+    setIsRatingModalOpen(false);
+    setRatingDismissed(true);
+  };
+
+  const handleSubmitRating = async () => {
+    console.log('[Rating] Submitting rating:', rating);
+    setIsRatingModalOpen(false);
+
+    try {
+      const result = await saveBuyerRating({
+        transactionId: transaction.id,
+        score: rating,
+        comment: reviewText.trim() || undefined,
+      });
+
+      if (!result.success) {
+        console.error('Failed to save rating to Supabase:', result.error);
+      } else {
+        console.log('[Rating] Saved to Supabase successfully');
+        setHasRated(true);
+      }
+    } catch (e) {
+      console.error("Failed to sync ratings stats", e);
+    }
+  };
+
   // Mark the receipt as left if the tab is closed or navigated away directly.
   useEffect(() => {
     if (transaction?.status !== 'funds_released') return;
@@ -699,7 +727,22 @@ export default function BuyerTrackingPublic({
 
     return (
       <div className="bg-[#000000] text-[#f4f4f5] min-h-screen font-sans flex flex-col justify-center items-center p-6 text-center">
-        <div className="max-w-lg w-full bg-[#0a0a0c] border border-zinc-900 rounded-3xl p-8 flex flex-col items-center gap-6 shadow-2xl receipt-print-area">
+        <div className="max-w-lg w-full bg-[#0a0a0c] border border-zinc-900 rounded-3xl p-8 flex flex-col items-center gap-6 shadow-2xl receipt-print-area relative overflow-hidden">
+          {/* On-screen + print watermark */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 flex items-center justify-center select-none"
+            style={{
+              backgroundImage: 'repeating-linear-gradient(-24deg, transparent, transparent 38px, rgba(16,185,129,0.04) 38px, rgba(16,185,129,0.04) 39px)',
+            }}
+          >
+            <span
+              className="font-extrabold uppercase tracking-[0.3em] text-emerald-400/10"
+              style={{ fontSize: '34px', transform: 'rotate(-24deg)', whiteSpace: 'nowrap' }}
+            >
+              Trova Escrow · Paid
+            </span>
+          </div>
           <style>{`
             @media print {
               @page { margin: 14mm; }
@@ -710,20 +753,7 @@ export default function BuyerTrackingPublic({
               .receipt-print-area > div { border: none !important; box-shadow: none !important; background: #ffffff !important; color: #000000 !important; }
               .receipt-print-hide { display: none !important; }
               .receipt-print-area * { color: #000000 !important; }
-              .receipt-print-area::before {
-                content: "TROVA ESCROW • PAID RECEIPT";
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) rotate(-24deg);
-                font-size: 38px;
-                font-weight: 800;
-                letter-spacing: 2px;
-                color: rgba(16, 185, 129, 0.10) !important;
-                white-space: nowrap;
-                pointer-events: none;
-                z-index: 0;
-              }
+              .receipt-watermark, .receipt-watermark * { visibility: visible !important; }
               .receipt-print-area > * { position: relative; z-index: 1; }
             }
           `}</style>
@@ -749,7 +779,10 @@ export default function BuyerTrackingPublic({
             <CheckCircle className="w-7 h-7" />
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 relative">
+            <div className="absolute -right-1 -top-1 rotate-12 px-3 py-1 rounded-md border-2 border-emerald-500/60 text-emerald-400 font-extrabold tracking-widest text-[11px] select-none">
+              PAID
+            </div>
             <h2 className="text-lg font-bold text-white tracking-tight">
               Transaction Completed
             </h2>
@@ -759,7 +792,12 @@ export default function BuyerTrackingPublic({
           </div>
 
           {/* Receipt Card */}
-          <div className="w-full bg-zinc-950 border border-zinc-900 rounded-xl p-5 text-left text-xs gap-3 flex flex-col font-sans">
+          <div className="w-full bg-zinc-950 border border-zinc-900 rounded-xl text-left text-xs gap-3 flex flex-col font-sans overflow-hidden">
+            <div className="bg-emerald-500/10 border-b border-emerald-500/20 px-5 py-2.5 flex items-center justify-between">
+              <span className="font-bold uppercase tracking-widest text-[10px] text-emerald-400">Payment Receipt</span>
+              <span className="font-mono text-[10px] text-zinc-500">#{transaction.id}</span>
+            </div>
+            <div className="p-5 flex flex-col gap-3">
             <div className="flex items-center gap-2 mb-3 pb-3 border-b border-zinc-800">
               <div className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-850 flex items-center justify-center font-bold font-mono text-emerald-400 text-xs overflow-hidden">
                 {transaction.vendorPhoto ? (
@@ -810,6 +848,7 @@ export default function BuyerTrackingPublic({
                 <span className="text-emerald-400 font-bold uppercase tracking-wider text-[11px]">Funds Released</span>
               </div>
             </div>
+            </div>
           </div>
 
           <div className="w-full flex flex-col gap-2.5 receipt-print-hide">
@@ -827,6 +866,8 @@ export default function BuyerTrackingPublic({
              </button>
              </div>
            </div>
+
+           {showRatingModal && renderRatingModal()}
           </div>
          );
    }
@@ -1035,34 +1076,6 @@ export default function BuyerTrackingPublic({
     });
     setFeedbackAlert("Thank you! Payout released to the merchant successfully.");
     console.log('[handleAuthorizeRelease] feedbackAlert set');
-  };
-
-  const handleSkipRating = () => {
-    console.log('[Rating] Skipped by user');
-    setIsRatingModalOpen(false);
-    setRatingDismissed(true);
-  };
-
-  const handleSubmitRating = async () => {
-    console.log('[Rating] Submitting rating:', rating);
-    setIsRatingModalOpen(false);
-
-    try {
-      const result = await saveBuyerRating({
-        transactionId: transaction.id,
-        score: rating,
-        comment: reviewText.trim() || undefined,
-      });
-
-      if (!result.success) {
-        console.error('Failed to save rating to Supabase:', result.error);
-      } else {
-        console.log('[Rating] Saved to Supabase successfully');
-        setHasRated(true);
-      }
-    } catch (e) {
-      console.error("Failed to sync ratings stats", e);
-    }
   };
 
   function renderRatingModal() {
@@ -1990,7 +2003,7 @@ export default function BuyerTrackingPublic({
       <SupportChatWidget />
 
       {/* Post-Delivery Rating Modal */}
-      {showRatingModal && renderRatingModal()}
+// TEMP-REMOVED modal render
 
       <ConfirmationModal 
         isOpen={modalOpen} 

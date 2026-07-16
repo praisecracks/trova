@@ -1,4 +1,4 @@
-# Trova — Escrow-by-Link Social Commerce
+# Trova, Escrow-by-Link Social Commerce
 
 Trova is an escrow-by-link social commerce platform. Sellers create secure escrow
 payment links, buyers track delivery progress in real time, and funds are released
@@ -16,7 +16,7 @@ support chat and staff review.
 
 ## Tech Stack
 
-- **Frontend**: React + TypeScript, Vite, Tailwind CSS, Framer Motion
+- **Frontend**: Go + React + TypeScript, Vite, Tailwind CSS, Framer Motion
 - **Backend / Data**: Supabase (Postgres + Realtime + Edge Functions) and a Go backend service
 - **Auth / RLS**: Supabase Row Level Security
 

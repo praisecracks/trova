@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, RotateCcw, XCircle } from 'lucide-react';
+import { Trash2, RotateCcw, XCircle, AlertTriangle } from 'lucide-react';
 import { EscrowLink } from '../types';
+
+const STORAGE_KEY = 'trustlink_deleted_escrow_links';
 
 interface DeletedHistoryProps {
   sellerId?: string | null;
+  onPermanentDelete?: (linkId: string) => void;
 }
 
-export default function DeletedHistory({ sellerId }: DeletedHistoryProps) {
+export default function DeletedHistory({ sellerId, onPermanentDelete }: DeletedHistoryProps) {
   const [deletedLinks, setDeletedLinks] = useState<EscrowLink[]>([]);
   const [showRestoreConfirm, setShowRestoreConfirm] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('trustlink_deleted_escrow_links');
+      const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved) as EscrowLink[];
         setDeletedLinks(parsed);
@@ -20,17 +25,33 @@ export default function DeletedHistory({ sellerId }: DeletedHistoryProps) {
     } catch (e) {}
   }, []);
 
+  const persist = (updated: EscrowLink[]) => {
+    setDeletedLinks(updated);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    // Keep the dashboard's deleted list in sync so removed links stay hidden.
+    window.dispatchEvent(new CustomEvent('trustlink_deleted_links_update'));
+  };
+
   const handleRestore = (linkId: string) => {
     const updated = deletedLinks.filter(l => l.id !== linkId);
-    setDeletedLinks(updated);
-    localStorage.setItem('trustlink_deleted_escrow_links', JSON.stringify(updated));
+    persist(updated);
     setShowRestoreConfirm(null);
   };
 
   const handlePermanentDelete = (linkId: string) => {
     const updated = deletedLinks.filter(l => l.id !== linkId);
-    setDeletedLinks(updated);
-    localStorage.setItem('trustlink_deleted_escrow_links', JSON.stringify(updated));
+    persist(updated);
+    // Also remove the link from the live escrow list so it can't re-appear
+    // in the dashboard table.
+    onPermanentDelete?.(linkId);
+    setShowDeleteConfirm(null);
+  };
+
+  const handleDeleteAll = () => {
+    const ids = deletedLinks.map(l => l.id);
+    persist([]);
+    ids.forEach(id => onPermanentDelete?.(id));
+    setShowDeleteAllConfirm(false);
   };
 
   return (
@@ -46,6 +67,15 @@ export default function DeletedHistory({ sellerId }: DeletedHistoryProps) {
           <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">
             {deletedLinks.length} deleted
           </span>
+          {deletedLinks.length > 0 && (
+            <button
+              onClick={() => setShowDeleteAllConfirm(true)}
+              className="px-3 py-1.5 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors cursor-pointer text-[10px] font-semibold flex items-center gap-1.5"
+            >
+              <Trash2 className="w-3 h-3" />
+              <span>Delete All</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -110,7 +140,7 @@ export default function DeletedHistory({ sellerId }: DeletedHistoryProps) {
                           <span>Restore</span>
                         </button>
                         <button
-                          onClick={() => handlePermanentDelete(link.id)}
+                          onClick={() => setShowDeleteConfirm(link.id)}
                           className="px-2.5 py-1.5 rounded-lg border border-red-500/20 bg-red-500/5 text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer text-[10px] font-semibold flex items-center gap-1"
                         >
                           <XCircle className="w-3 h-3" />
@@ -122,6 +152,64 @@ export default function DeletedHistory({ sellerId }: DeletedHistoryProps) {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm permanent delete (single) */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-zinc-950 border border-red-500/30 rounded-2xl p-6 max-w-sm w-full flex flex-col gap-4 shadow-2xl">
+            <div className="flex items-center gap-2 text-red-400">
+              <AlertTriangle className="w-5 h-5" />
+              <h3 className="text-sm font-bold text-white">Delete permanently?</h3>
+            </div>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              This escrow link will be erased forever and cannot be recovered.
+            </p>
+            <div className="flex items-center gap-3 w-full mt-1">
+              <button
+                onClick={() => setShowDeleteConfirm(null)}
+                className="flex-1 py-2.5 rounded-xl border border-zinc-800 text-zinc-300 hover:bg-zinc-900 font-bold text-xs cursor-pointer transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handlePermanentDelete(showDeleteConfirm)}
+                className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-400 text-white font-bold text-xs cursor-pointer transition-all"
+              >
+                Delete Forever
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm delete all */}
+      {showDeleteAllConfirm && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-zinc-950 border border-red-500/30 rounded-2xl p-6 max-w-sm w-full flex flex-col gap-4 shadow-2xl">
+            <div className="flex items-center gap-2 text-red-400">
+              <AlertTriangle className="w-5 h-5" />
+              <h3 className="text-sm font-bold text-white">Delete all permanently?</h3>
+            </div>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              All {deletedLinks.length} deleted escrow link{deletedLinks.length === 1 ? '' : 's'} will be erased forever and cannot be recovered.
+            </p>
+            <div className="flex items-center gap-3 w-full mt-1">
+              <button
+                onClick={() => setShowDeleteAllConfirm(false)}
+                className="flex-1 py-2.5 rounded-xl border border-zinc-800 text-zinc-300 hover:bg-zinc-900 font-bold text-xs cursor-pointer transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAll}
+                className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-400 text-white font-bold text-xs cursor-pointer transition-all"
+              >
+                Delete All
+              </button>
+            </div>
           </div>
         </div>
       )}

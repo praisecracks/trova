@@ -238,6 +238,7 @@ export default function App() {
     selectedLink,
     setSelectedLink,
     updateEscrowLinks,
+    removeEscrowLink,
     pendingDeliveries
   } = useEscrowLinks(auth.sellerId);
 
@@ -1337,9 +1338,12 @@ export default function App() {
              />
            )}
 
-           {activeDashboardTab === 'deleted-history' && (
-             <DeletedHistory sellerId={auth.sellerId} />
-           )}
+            {activeDashboardTab === 'deleted-history' && (
+              <DeletedHistory
+                sellerId={auth.sellerId}
+                onPermanentDelete={removeEscrowLink}
+              />
+            )}
 
            {activeDashboardTab === 'onboarding-hub' && (
              <AppCenter />

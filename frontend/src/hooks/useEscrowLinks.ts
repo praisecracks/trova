@@ -125,6 +125,16 @@ export function useEscrowLinks(sellerId: string | null) {
     window.dispatchEvent(new CustomEvent('trustlink_escrow_links_changed'));
   };
 
+  // Permanently remove a link from the active list (used when a link is
+  // hard-deleted from Deleted History). Without this the link would still
+  // exist in the main escrow list and re-appear in the dashboard table.
+  const removeEscrowLink = (linkId: string) => {
+    const resolved = escrowLinks.filter(l => l.id !== linkId);
+    setEscrowLinks(resolved);
+    localStorage.setItem('trustlink_escrow_links', JSON.stringify(resolved));
+    window.dispatchEvent(new CustomEvent('trustlink_escrow_links_changed'));
+  };
+
   const pendingDeliveries = escrowLinks.filter(l => l.status === 'delivered').length;
 
   return {
@@ -132,6 +142,7 @@ export function useEscrowLinks(sellerId: string | null) {
     selectedLink,
     setSelectedLink,
     updateEscrowLinks,
+    removeEscrowLink,
     pendingDeliveries
   };
 }

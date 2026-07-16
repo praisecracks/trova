@@ -55,6 +55,20 @@ export default function DashboardPage({
     }
   });
 
+  // Keep the deleted list in sync when links are permanently removed from Deleted History.
+  React.useEffect(() => {
+    const syncDeleted = () => {
+      try {
+        const saved = localStorage.getItem('trustlink_deleted_escrow_links');
+        setDeletedLinks(saved ? JSON.parse(saved) : []);
+      } catch (e) {
+        setDeletedLinks([]);
+      }
+    };
+    window.addEventListener('trustlink_deleted_links_update', syncDeleted);
+    return () => window.removeEventListener('trustlink_deleted_links_update', syncDeleted);
+  }, []);
+
   const [broadcast, setBroadcast] = useState(() => {
     try {
       return localStorage.getItem('trustlink_platform_broadcast') || '';
