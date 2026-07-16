@@ -1,0 +1,1780 @@
+/* Preconnect to font origins for faster loading */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@10..96,200..800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --bg: #0d0d10;
+  --surface: #18181b;
+  --surface2: #1c1c20;
+  --border: #27272a;
+  --border2: #2e2e33;
+  --text-primary: #f4f4f5;
+  --text-muted: #71717a;
+  --text-dim: #52525b;
+  --input-bg: #0f0f12;
+  --input-border: #2e2e33;
+  --shadow: 0px 1px 3px rgba(0,0,0,0.4);
+  --dropdown-bg: #18181b;
+  --dropdown-shadow: 0px 4px 16px rgba(0,0,0,0.5);
+  --bar-track-bg: #09090b;
+  --progress-track: #27272a;
+  --skeleton-line: #3f3f46;
+  --skeleton-fill: rgba(255, 255, 255, 0.05);
+}
+
+/* Use system fonts as fallback while web fonts load */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Hide scrollbar for carousel components */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Once fonts load, apply them */
+.font-sans {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.light-theme {
+  --bg: #f4f4f5;
+  --surface: #ffffff;
+  --surface2: #fafafa;
+  --border: #e4e4e7;
+  --border2: #d4d4d8;
+  --text-primary: #18181b;
+  --text-muted: #71717a;
+  --text-dim: #52525b;
+  --input-bg: #ffffff;
+  --input-border: #d4d4d8;
+  --shadow: 0px 1px 4px rgba(0,0,0,0.08), 0px 1px 2px rgba(0,0,0,0.05);
+  --dropdown-bg: #ffffff;
+  --dropdown-shadow: 0px 4px 16px rgba(0,0,0,0.1);
+  --bar-track-bg: #e4e4e7;
+  --progress-track: #e4e4e7;
+  --skeleton-line: #c4c4cc;
+  --skeleton-fill: rgba(0, 0, 0, 0.05);
+}
+
+@theme {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Bricolage Grotesque', var(--font-sans);
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+body.light-theme {
+  background-color: var(--bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Custom continuous glowing animation */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.25), 0 0 1px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.65), 0 0 2px rgba(16, 185, 129, 0.4);
+  }
+}
+
+.active-tracking-step {
+  animation: pulseGlow 1.8s infinite ease-in-out;
+}
+
+/* Scrollbar customizations for Sleek Interface theme */
+@keyframes slowDrift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(3%, 5%) scale(1.05);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.animate-slow-drift {
+  animation: slowDrift 12s ease-in-out infinite;
+}
+
+/* Empty-state dangling/ringing bell */
+@keyframes bellSwing {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+.bell-dangle {
+  transform-origin: top center;
+  animation: bellSwing 1.8s ease-in-out infinite;
+}
+
+@keyframes bellWave {
+  0% { opacity: 0; transform: translateX(-2px) scale(0.8); }
+  40% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(4px) scale(1.1); }
+}
+
+.bell-wave {
+  animation: bellWave 1.8s ease-in-out infinite;
+}
+
+.bell-wave-delayed {
+  animation: bellWave 1.8s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020202;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1f1f22;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2d2d30;
+}
+
+/* Hide scrollbar utility class */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* Dynamic Light Mode Theme Overrides */
+.light-theme {
+  --theme-bg-base: #f4f4f5;
+  --theme-bg-panel: #ffffff;
+  --theme-bg-card: #ffffff;
+  --theme-border: #e4e4e7;
+  --theme-text-primary: #18181b;
+  --theme-text-secondary: #71717a;
+  --theme-text-muted: #71717a;
+
+  background-color: #f4f4f5 !important;
+  color: #18181b !important;
+}
+
+body.light-theme {
+  background-color: #f4f4f5 !important;
+  color: #18181b !important;
+}
+
+/* Page background overrides */
+.light-theme mainStatus,
+.light-theme main,
+.light-theme #vendor-dashboard-content,
+.light-theme #payout-history-container,
+.light-theme #settings-view-form {
+  background-color: #f4f4f5 !important;
+}
+
+/* Sidebar background and area settings */
+.light-theme aside,
+.light-theme aside .bg-black,
+.light-theme aside .flex-col {
+  background-color: #ffffff !important;
+}
+
+.light-theme aside {
+  border-right: 1px solid #e4e4e7 !important;
+}
+
+/* Sidebar brand area background */
+.light-theme aside .px-6.py-6 {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e4e4e7 !important;
+}
+
+/* Sidebar nav items default style */
+.light-theme aside button {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: #52525b !important;
+}
+
+.light-theme aside button svg {
+  color: #52525b !important;
+}
+
+/* Sidebar nav items hover style */
+.light-theme aside button:hover {
+  background-color: #f4f4f5 !important;
+  color: #18181b !important;
+}
+
+.light-theme aside button:hover svg {
+  color: #18181b !important;
+}
+
+/* Sidebar nav item active style */
+.light-theme aside button.text-emerald-400,
+.light-theme aside button[id^="sidebar-tab-"].bg-zinc-900 {
+  background-color: rgba(16,185,129,0.1) !important;
+  color: #10b981 !important;
+  border-left: 3px solid #10b981 !important;
+  border-top-color: transparent !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+  font-weight: 700 !important;
+}
+
+.light-theme aside button.text-emerald-400 svg,
+.light-theme aside button[id^="sidebar-tab-"].bg-zinc-900 svg {
+  color: #10b981 !important;
+}
+
+/* Sidebar section labels */
+.light-theme aside span.brand-subtext {
+  color: #a1a1aa !important;
+}
+
+.light-theme aside .text-\[9px\] {
+  color: #a1a1aa !important;
+}
+
+/* Sidebar footer area background and border */
+.light-theme aside .px-4.pb-4,
+.light-theme aside .pb-4 {
+  background-color: #ffffff !important;
+  border-top: 1px solid #e4e4e7 !important;
+  padding-top: 16px !important;
+}
+
+/* Dashboard header default style (dark mode default) */
+#dashboard-header,
+header#dashboard-header {
+  background-color: #0A0A0A !important;
+  border-bottom: 1px solid transparent !important;
+}
+
+/* Top header bar background, border & shadow */
+.light-theme header,
+.light-theme header .bg-zinc-950,
+.light-theme header .bg-black {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e4e4e7 !important;
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.06) !important;
+}
+
+.light-theme header h2 span,
+.light-theme header .text-zinc-100 {
+  color: #18181b !important;
+}
+
+/* Dashboard header override in light theme */
+.light-theme #dashboard-header {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e4e4e7 !important;
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.06) !important;
+}
+
+.light-theme #dashboard-header h2 span,
+.light-theme #dashboard-header .text-zinc-100 {
+  color: #18181b !important;
+}
+
+/* Metric cards background & shadow structure */
+.light-theme .metric-card {
+  background-color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0px 1px 4px rgba(0,0,0,0.08), 0px 1px 2px rgba(0,0,0,0.05) !important;
+  border-top: 1px solid rgba(16,185,129,0.25) !important;
+  border-radius: 12px !important;
+}
+
+.light-theme .metric-card span.text-[10px],
+.light-theme .metric-card span.text-[11px],
+.light-theme .metric-card span.text-[8.5px],
+.light-theme .metric-card span.text-zinc-400,
+.light-theme .metric-card span.text-zinc-500,
+.light-theme .metric-card span.text-zinc-550 {
+  color: #71717a !important;
+}
+
+.light-theme .metric-card span.text-2xl,
+.light-theme .metric-card span.text-zinc-100,
+.light-theme .metric-card span.text-zinc-200,
+.light-theme .metric-card span.text-white {
+  color: #18181b !important;
+}
+
+/* Table container styling system */
+.light-theme .table-container {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.06) !important;
+  border-radius: 12px !important;
+}
+
+/* Table header bar background / header actions block */
+.light-theme .table-container thead tr,
+.light-theme .table-container .p-5.border-b,
+.light-theme .table-container .p-4.border-b {
+  background-color: #f9f9f9 !important;
+  border-bottom: 1px solid #e4e4e7 !important;
+}
+
+.light-theme .table-container thead th {
+  color: #71717a !important;
+}
+
+/* Table body row backgrounds & border bottom */
+.light-theme .table-container tbody tr {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #f4f4f5 !important;
+}
+
+.light-theme .table-container tbody tr:hover {
+  background-color: #f9f9f9 !important;
+}
+
+/* Table cell primary & secondary values */
+.light-theme .table-container tbody td,
+.light-theme .table-container tbody td span.text-zinc-200,
+.light-theme .table-container tbody td span.text-white {
+  color: #18181b !important;
+}
+
+.light-theme .table-container tbody td span.text-zinc-500,
+.light-theme .table-container tbody td span.text-zinc-550 {
+  color: #71717a !important;
+}
+
+/* Table body transaction ID text */
+.light-theme .table-container tbody td.text-emerald-400 {
+  color: #10b981 !important;
+}
+
+/* Search input elements */
+.light-theme input {
+  background-color: #ffffff !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #18181b !important;
+}
+
+.light-theme input::placeholder {
+  color: #a1a1aa !important;
+}
+
+.light-theme input:focus {
+  border-color: #10b981 !important;
+  box-shadow: 0px 0px 0px 3px rgba(16,185,129,0.12) !important;
+  outline: none !important;
+}
+
+/* Filter dropdown elements */
+.light-theme select {
+  background-color: #ffffff !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #18181b !important;
+}
+
+/* Status badges in light mode */
+.light-theme span.badge-deposited {
+  background-color: rgba(16,185,129,0.1) !important;
+  color: #059669 !important;
+  border: 1px solid rgba(16,185,129,0.2) !important;
+}
+.light-theme span.badge-deposited span {
+  background-color: #059669 !important;
+}
+
+.light-theme span.badge-shipped {
+  background-color: rgba(59,130,246,0.1) !important;
+  color: #2563eb !important;
+  border: 1px solid rgba(59,130,246,0.2) !important;
+}
+.light-theme span.badge-shipped span {
+  background-color: #2563eb !important;
+}
+
+.light-theme span.badge-pending-deposit {
+  background-color: rgba(245,158,11,0.1) !important;
+  color: #d97706 !important;
+  border: 1px solid rgba(245,158,11,0.2) !important;
+}
+.light-theme span.badge-pending-deposit span {
+  background-color: #d97706 !important;
+}
+
+.light-theme span.badge-delivered,
+.light-theme span.badge-funds-released {
+  background-color: rgba(16,185,129,0.1) !important;
+  color: #059669 !important;
+  border: 1px solid rgba(16,185,129,0.2) !important;
+}
+.light-theme span.badge-delivered span,
+.light-theme span.badge-funds-released span {
+  background-color: #059669 !important;
+}
+
+.light-theme span.badge-disputed {
+  background-color: rgba(239,68,68,0.1) !important;
+  color: #dc2626 !important;
+  border: 1px solid rgba(239,68,68,0.2) !important;
+}
+.light-theme span.badge-disputed span {
+  background-color: #dc2626 !important;
+}
+
+/* Profile dropdown styling */
+.light-theme .profile-dropdown {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+.light-theme .profile-dropdown .bg-zinc-950\/50,
+.light-theme .profile-dropdown .py-2.5 {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e4e4e7 !important;
+}
+
+.light-theme .profile-dropdown span.text-zinc-100 {
+  color: #18181b !important;
+}
+
+.light-theme .profile-dropdown span.text-zinc-500 {
+  color: #71717a !important;
+}
+
+.light-theme .profile-dropdown button {
+  color: #18181b !important;
+}
+
+.light-theme .profile-dropdown button:hover {
+  background-color: #f4f4f5 !important;
+}
+
+.light-theme .profile-dropdown button.text-red-400 {
+  color: #dc2626 !important;
+}
+
+.light-theme .profile-dropdown hr,
+.light-theme .profile-dropdown .border-zinc-800 {
+  border-color: #e4e4e7 !important;
+}
+
+/* Brand Details clear visibility */
+.light-theme .brand-text {
+  color: #18181b !important;
+}
+
+.light-theme .brand-text-accent {
+  color: #10b981 !important;
+}
+
+/* SMS OK badge on table rows */
+.light-theme .sms-badge {
+  background-color: #f4f4f5 !important;
+  color: #52525b !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+/* Portal and Copy Link buttons */
+.light-theme .portal-btn,
+.light-theme .copy-btn {
+  background-color: transparent !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #52525b !important;
+}
+
+.light-theme .portal-btn:hover,
+.light-theme .copy-btn:hover {
+  border-color: #10b981 !important;
+  color: #10b981 !important;
+  background-color: transparent !important;
+}
+
+/* Notification bell icon */
+.light-theme header button svg {
+  color: #52525b !important;
+}
+
+/* STRICT OVERRIDE FOR TABLE ROWS OPACITIES */
+.light-theme tbody tr,
+.light-theme tbody tr *,
+.light-theme table tr,
+.light-theme table tr * {
+  opacity: 1 !important;
+}
+
+/* Modal and overlay backgrounds */
+#trustlink-confirmation-modal-container {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: blur(2px) !important;
+  -webkit-backdrop-filter: blur(2px) !important;
+}
+
+.light-theme #trustlink-confirmation-modal-container {
+  background-color: rgba(0, 0, 0, 0.25) !important;
+}
+
+#trustlink-confirmation-modal-box {
+  background-color: #0c0c0e !important;
+  border: 1px solid #1f1f22 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+}
+
+.light-theme #trustlink-confirmation-modal-box {
+  background-color: #ffffff !important;
+  border-color: #e4e4e7 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08) !important;
+}
+
+#trustlink-confirmation-modal-icon-wrapper {
+  background-color: rgba(31, 31, 34, 0.4) !important;
+  border: 1px solid rgba(48, 48, 52, 0.4) !important;
+}
+
+.light-theme #trustlink-confirmation-modal-icon-wrapper {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+#trustlink-confirmation-modal-title {
+  color: #ffffff !important;
+}
+
+.light-theme #trustlink-confirmation-modal-title {
+  color: #18181b !important;
+}
+
+#trustlink-confirmation-modal-subtext {
+  color: #a1a1aa !important;
+}
+
+.light-theme #trustlink-confirmation-modal-subtext {
+  color: #52525b !important;
+}
+
+#trustlink-confirmation-modal-btn-cancel {
+  background-color: rgba(31, 31, 34, 0.4) !important;
+  border: 1px solid #27272a !important;
+  color: #d4d4d8 !important;
+  transition: all 0.2s ease-in-out;
+}
+
+#trustlink-confirmation-modal-btn-cancel:hover {
+  background-color: #1f1f22 !important;
+  color: #ffffff !important;
+  border-color: #3f3f46 !important;
+}
+
+.light-theme #trustlink-confirmation-modal-btn-cancel {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #52525b !important;
+}
+
+.light-theme #trustlink-confirmation-modal-btn-cancel:hover {
+  background-color: #e4e4e7 !important;
+  color: #18181b !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Create Escrow Link Modal backdrop and panel light theme styling rules */
+#create-link-modal-container {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: blur(2px) !important;
+  -webkit-backdrop-filter: blur(2px) !important;
+}
+
+.light-theme #create-link-modal-container {
+  background-color: rgba(0, 0, 0, 0.25) !important;
+}
+
+#create-link-modal-box {
+  background-color: #0c0c0e !important;
+  border: 1px solid #1f1f22 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+}
+
+.light-theme #create-link-modal-box {
+  background-color: #ffffff !important;
+  border-color: #e4e4e7 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08) !important;
+}
+
+#create-link-modal-close-btn {
+  background-color: rgba(31, 31, 34, 0.4) !important;
+  border: 1px solid #27272a !important;
+  color: #a1a1aa !important;
+}
+
+#create-link-modal-close-btn:hover {
+  background-color: #1f1f22 !important;
+  color: #ffffff !important;
+  border-color: #3f3f46 !important;
+}
+
+.light-theme #create-link-modal-close-btn {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #52525b !important;
+}
+
+.light-theme #create-link-modal-close-btn:hover {
+  background-color: #e4e4e7 !important;
+  color: #18181b !important;
+  border-color: #cbd5e1 !important;
+}
+
+#create-link-modal-header {
+  border-bottom: 1px solid #1f1f22 !important;
+}
+
+.light-theme #create-link-modal-header {
+  border-bottom: 1px solid #e4e4e7 !important;
+}
+
+#create-link-modal-badge {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+#create-link-modal-heading {
+  color: #ffffff !important;
+}
+
+.light-theme #create-link-modal-heading {
+  color: #18181b !important;
+}
+
+#create-link-modal-subtext {
+  color: #a1a1aa !important;
+}
+
+.light-theme #create-link-modal-subtext {
+  color: #52525b !important;
+}
+
+/* Form labels on CreateLinkModal */
+.light-theme .create-link-label {
+  color: #52525b !important;
+}
+
+/* Light theme options for Selects & Inputs inside CreateLinkModal */
+.light-theme #create-link-form-type,
+.light-theme #create-link-form-currency,
+.light-theme #create-link-form-name,
+.light-theme #create-link-form-phone,
+.light-theme #create-link-form-amount,
+.light-theme #create-link-form-shipping,
+.light-theme #create-link-form-description {
+  background-color: #ffffff !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #18181b !important;
+}
+
+.light-theme #create-link-form-type:focus,
+.light-theme #create-link-form-currency:focus,
+.light-theme #create-link-form-name:focus,
+.light-theme #create-link-form-phone:focus,
+.light-theme #create-link-form-amount:focus,
+.light-theme #create-link-form-shipping:focus,
+.light-theme #create-link-form-description:focus {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1) !important;
+}
+
+.light-theme #create-link-form-approx {
+  color: #71717a !important;
+}
+
+.light-theme #create-link-modal-box select option {
+  background-color: #ffffff !important;
+  color: #18181b !important;
+}
+
+#create-link-form-approx {
+  color: #71717a !important;
+}
+
+/* Info Box / regulated secure vault */
+#create-link-modal-info-banner {
+  background-color: rgba(31, 31, 34, 0.4) !important;
+  border: 1px solid #27272a !important;
+}
+
+.light-theme #create-link-modal-info-banner {
+  background-color: #f0fdf4 !important;
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+.light-theme #create-link-modal-info-text {
+  color: #166534 !important;
+}
+
+.light-theme #create-link-modal-info-footer {
+  border-top-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+.light-theme #create-link-modal-info-footer-label {
+  color: #15803d !important;
+}
+
+/* Buttons in CreateLinkModal */
+#create-link-modal-cancel-btn {
+  background-color: rgba(31, 31, 34, 0.4) !important;
+  border: 1px solid #27272a !important;
+  color: #d4d4d8 !important;
+}
+
+#create-link-modal-cancel-btn:hover {
+  background-color: #1f1f22 !important;
+  color: #ffffff !important;
+  border-color: #3f3f46 !important;
+}
+
+.light-theme #create-link-modal-cancel-btn {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #52525b !important;
+}
+
+.light-theme #create-link-modal-cancel-btn:hover {
+  background-color: #e4e4e7 !important;
+  color: #18181b !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Mobile responsive sidebar light/dark mode enhancements */
+#mobile-sidebar-backdrop {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: blur(2px) !important;
+  -webkit-backdrop-filter: blur(2px) !important;
+}
+
+.light-theme #mobile-sidebar-backdrop {
+  background-color: rgba(0, 0, 0, 0.25) !important;
+}
+
+#mobile-sidebar-close-btn {
+  background-color: rgba(31, 31, 34, 0.4) !important;
+  border: 1px solid #27272a !important;
+  color: #a1a1aa !important;
+}
+
+#mobile-sidebar-close-btn:hover {
+  background-color: #1f1f22 !important;
+  color: #ffffff !important;
+  border-color: #3f3f46 !important;
+}
+
+.light-theme #mobile-sidebar-close-btn {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #52525b !important;
+}
+
+.light-theme #mobile-sidebar-close-btn:hover {
+  background-color: #e4e4e7 !important;
+  color: #18181b !important;
+  border-color: #cbd5e1 !important;
+}
+
+.light-theme aside .border-zinc-800,
+.light-theme aside .border-r {
+  border-color: #e4e4e7 !important;
+}
+
+.light-theme .fixed .bg-zinc-950 {
+  background-color: #ffffff !important;
+  border-color: #e4e4e7 !important;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1) !important;
+}
+.light-theme .fixed .bg-zinc-950 h3.text-white,
+.light-theme .fixed .bg-zinc-950 h3 {
+  color: #18181b !important;
+}
+.light-theme .fixed .bg-zinc-950 p.text-zinc-400,
+.light-theme .fixed .bg-zinc-950 p {
+  color: #52525b !important;
+}
+.light-theme .fixed .bg-zinc-950 .bg-zinc-900\/50,
+.light-theme .fixed .bg-zinc-950 div.bg-zinc-900\/50 {
+  background-color: #f4f4f5 !important;
+  border-color: #e4e4e7 !important;
+}
+.light-theme .fixed .bg-black {
+  background-color: rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Continuous Left horizontal marquee keyframes */
+@keyframes marquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
+/* Precise placeholder appearance overrides - ensures placeholders are thin, subtle, and never bold */
+::placeholder,
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  font-weight: 400 !important;
+  font-style: normal !important;
+  color: #52525b !important; /* Zinc-600 style color for dark theme */
+  opacity: 0.75 !important;
+}
+
+.light-theme ::placeholder,
+.light-theme input::placeholder,
+.light-theme textarea::placeholder,
+.light-theme select::placeholder {
+  font-weight: 400 !important;
+  font-style: normal !important;
+  color: #94a3b8 !important; /* Slate-400 style color for light theme */
+  opacity: 0.8 !important;
+}
+
+/* ==========================================================
+   TrustLink Light Mode Dashboard Components Style Cascade
+   ========================================================== */
+
+/* Card Border Removals and Box Shadows (Rule 4) */
+.light-theme .bg-zinc-950,
+.light-theme .bg-zinc-900,
+.light-theme .border-zinc-800,
+.light-theme .border-zinc-900 {
+  border-color: #e4e4e7 !important;
+}
+
+/* Specific Card shadow replacements */
+.light-theme .metric-card,
+.light-theme #storefront-profile-container div.p-6,
+.light-theme #catalog-section .grid > div,
+.light-theme #learning-hub-container div.bg-zinc-950,
+.light-theme #learning-hub-container .grid > div,
+.light-theme #settings-view-container .bg-zinc-950 {
+  background-color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0px 1px 4px rgba(0,0,0,0.07), 0px 1px 2px rgba(0,0,0,0.04) !important;
+}
+
+/* Primary border overrides */
+.light-theme .border-b,
+.light-theme .border-t,
+.light-theme .border-l,
+.light-theme .border-r,
+.light-theme .border {
+  border-color: #e4e4e7 !important;
+}
+
+/* Secondary borders and subtle separators (Rule 4) */
+.light-theme hr,
+.light-theme .divide-zinc-900 > *,
+.light-theme .border-zinc-900 {
+  border-color: #f0f0f0 !important;
+}
+
+/* Input Fields & Textareas default/focus (Rule 4) */
+.light-theme input,
+.light-theme select,
+.light-theme textarea {
+  background-color: #ffffff !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #18181b !important;
+}
+
+.light-theme input:focus,
+.light-theme select:focus,
+.light-theme textarea:focus {
+  border-color: #10b981 !important;
+  box-shadow: 0px 0px 0px 3px rgba(16,185,129,0.12) !important;
+  outline: none !important;
+}
+
+/* Table boundaries and dividers (Rule 4) */
+.light-theme .table-container,
+.light-theme table {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+.light-theme tbody tr,
+.light-theme thead tr,
+.light-theme tr {
+  border-bottom: 1px solid #f4f4f4 !important;
+}
+
+/* ==========================================================
+   Rule 5: Getting Started Page Overrides
+   ========================================================== */
+.light-theme #learning-hub-container h1 {
+  color: #18181b !important;
+}
+
+.light-theme #learning-hub-container p {
+  color: #52525b !important;
+}
+
+/* Viewport slider background and subheaders */
+.light-theme #learning-hub-container .bg-zinc-950 h3 {
+  color: #18181b !important;
+}
+
+.light-theme #learning-hub-container .bg-black {
+  background-color: #fafafa !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+.light-theme #learning-hub-container .bg-black button {
+  color: #71717a !important;
+}
+
+.light-theme #learning-hub-container .bg-black button.text-emerald-400 {
+  background-color: #ffffff !important;
+  border-color: #e4e4e7 !important;
+  color: #10b981 !important;
+  box-shadow: 0px 1px 2px rgba(0,0,0,0.05) !important;
+}
+
+/* PHASE number labels (PHASE 01) format */
+.light-theme #learning-hub-container .grid span.text-\[10px\] {
+  color: #71717a !important;
+  background-color: #f4f4f5 !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+/* Main card display titles */
+.light-theme #learning-hub-container .grid h4 {
+  color: #18181b !important;
+}
+
+/* Card body description labels */
+.light-theme #learning-hub-container .grid p {
+  color: #52525b !important;
+}
+
+/* Status markers / action tags */
+.light-theme #learning-hub-container .grid span.text-mono {
+  color: #71717a !important;
+}
+
+/* LEARNING STUDIO text stays emerald */
+.light-theme #learning-hub-container span.text-\[10px\].tracking-widest {
+  color: #10b981 !important;
+}
+
+/* Trust status indicator bar */
+.light-theme #learning-hub-container .bg-zinc-950\/20 {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #e4e4e7 !important;
+  color: #71717a !important;
+}
+
+.light-theme #learning-hub-container .bg-zinc-950\/20 span,
+.light-theme #learning-hub-container .bg-zinc-950\/20 .text-zinc-100 {
+  color: #71717a !important;
+}
+
+/* Policy FAQS */
+.light-theme #learning-hub-container .bg-zinc-950.border.border-zinc-800 h3 {
+  color: #18181b !important;
+}
+
+.light-theme #learning-hub-container .bg-zinc-950.border.border-zinc-800 h5 {
+  color: #18181b !important;
+  font-weight: 600 !important;
+}
+
+.light-theme #learning-hub-container .bg-zinc-950.border.border-zinc-800 p {
+  color: #52525b !important;
+}
+
+
+/* ==========================================================
+   Rule 6: Account Settings Page Styling
+   ========================================================== */
+.light-theme #settings-view-container label {
+  color: #71717a !important;
+}
+
+.light-theme #settings-view-container .text-white {
+  color: #18181b !important;
+}
+
+/* Sub tabs and control triggers */
+.light-theme #settings-view-container .border-b.border-zinc-800 {
+  border-bottom-color: #e4e4e7 !important;
+}
+
+.light-theme #settings-view-container button.border-transparent {
+  border-bottom-color: transparent !important;
+  color: #71717a !important;
+}
+
+.light-theme #settings-view-container button.border-emerald-500 {
+  border-bottom-color: #10b981 !important;
+  color: #10b981 !important;
+}
+
+/* Biography text area placeholder values */
+.light-theme #settings-view-container textarea {
+  background-color: #ffffff !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #18181b !important;
+}
+
+.light-theme #settings-view-container textarea::placeholder {
+  color: #a1a1aa !important;
+}
+
+/* Live Profile Hub Card right hand pane */
+.light-theme #settings-view-container .lg\:col-span-4 .bg-zinc-950 {
+  background-color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0px 1px 4px rgba(0,0,0,0.07), 0px 1px 2px rgba(0,0,0,0.04) !important;
+}
+
+.light-theme #settings-view-container .lg\:col-span-4 .bg-zinc-900\/60,
+.light-theme #settings-view-container .lg\:col-span-4 .bg-black\/35,
+.light-theme #settings-view-container .lg\:col-span-4 .bg-black {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #e4e4e7 !important;
+  color: #52525b !important;
+}
+
+.light-theme #settings-view-container .lg\:col-span-4 span.text-zinc-500,
+.light-theme #settings-view-container .lg\:col-span-4 div.text-zinc-400 {
+  color: #52525b !important;
+}
+
+/* Security Covenant info box container rules */
+.light-theme #settings-view-container div.bg-zinc-950.border.border-zinc-800.p-4.sm\:p-5 {
+  background-color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0px 1px 4px rgba(0,0,0,0.07), 0px 1px 2px rgba(0,0,0,0.04) !important;
+}
+
+.light-theme #settings-view-container div.bg-zinc-950.border.border-zinc-800.p-4.sm\:p-5 span.text-zinc-400 {
+  color: #71717a !important;
+}
+
+/* Security Covenant Inner Box left green accent border */
+.light-theme #settings-view-container .lg\:col-span-4 .bg-zinc-900\/40 {
+  background: rgba(16, 185, 129, 0.04) !important;
+  border-left: 3px solid #10b981 !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-radius: 8px !important;
+}
+
+.light-theme #settings-view-container .lg\:col-span-4 .bg-zinc-900\/40 div {
+  color: #52525b !important;
+}
+
+
+/* ==========================================================
+   Rule 7: My Store Link Page Styling
+   ========================================================== */
+.light-theme #storefront-profile-container h2,
+.light-theme #storefront-profile-container strong {
+  color: #18181b !important;
+}
+
+.light-theme #storefront-profile-container p {
+  color: #71717a !important;
+}
+
+/* Secured escrow badge */
+.light-theme #storefront-profile-container .bg-emerald-500\/15 {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+  color: #10b981 !important;
+}
+
+/* Social links icons */
+.light-theme #storefront-profile-container .bg-black {
+  background-color: #f4f4f5 !important;
+  border-color: #e4e4e7 !important;
+  color: #52525b !important;
+}
+
+.light-theme #storefront-profile-container .bg-black:hover {
+  background-color: #e4e4e7 !important;
+  color: #18181b !important;
+}
+
+/* Catalog Store section container background */
+.light-theme #catalog-section {
+  background-color: #fafafa !important;
+  padding: 16px !important;
+  border-radius: 12px !important;
+  box-shadow: 0px 1px 4px rgba(0,0,0,0.04) !important;
+}
+
+/* Product names details labels and prices */
+.light-theme #catalog-section h4 {
+  color: #18181b !important;
+}
+
+.light-theme #catalog-section p {
+  color: #71717a !important;
+}
+
+.light-theme #catalog-section span.font-mono {
+  color: #18181b !important;
+}
+
+/* Authentic checkout watermark text layer */
+.light-theme #catalog-section .grid > div .bg-zinc-900 {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+.light-theme #catalog-section .grid > div .bg-zinc-900 span {
+  color: #d4d4d8 !important;
+}
+
+
+/* ==========================================================
+   Rule 8: Notification Panel Overrides (FIX 2)
+   ========================================================== */
+.light-theme .notification-dropdown {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0px 4px 20px rgba(0,0,0,0.08) !important;
+}
+
+.light-theme .notification-dropdown div.max-h-\[320px\] {
+  background-color: #ffffff !important;
+}
+
+/* Divider lines between rows */
+.light-theme .notification-dropdown div.px-4.py-3 {
+  border-color: #f4f4f5 !important;
+}
+
+/* Header inside notification panel */
+.light-theme .notification-header {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e4e4e7 !important;
+}
+
+/* REAL-TIME ACTIVITY header text inside the panel */
+.light-theme .notification-header span,
+.light-theme .notification-header span.text-zinc-105 {
+  color: #18181b !important;
+}
+
+/* Mark read and Clear action links */
+.light-theme .notification-header button {
+  color: #10b981 !important;
+}
+
+/* Mark read and Clear action hover links (if any) */
+.light-theme .notification-header button:hover {
+  color: #059669 !important;
+}
+
+/* Each notification row background hover */
+.light-theme .notification-dropdown div.px-4.py-3 {
+  background-color: transparent !important;
+}
+
+.light-theme .notification-dropdown div.px-4.py-3:hover {
+  background-color: #f9f9f9 !important;
+}
+
+/* Text colors inside list rows */
+.light-theme .notification-dropdown .notif-title {
+  color: #18181b !important;
+}
+
+.light-theme .notification-dropdown .notif-desc,
+.light-theme .notification-dropdown p {
+  color: #71717a !important;
+}
+
+.light-theme .notification-dropdown .notif-timestamp,
+.light-theme .notification-dropdown span,
+.light-theme .notification-dropdown span.text-zinc-500 {
+  color: #a1a1aa !important;
+}
+
+/* Tinted background icon circles and icon colors */
+/* Emerald notifications: rgba(16,185,129,0.1) background with #10b981 icon */
+.light-theme .notification-dropdown .text-emerald-500,
+.light-theme .notification-dropdown .bg-emerald-500\/10 {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  color: #10b981 !important;
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+.light-theme .notification-dropdown .text-emerald-500 svg,
+.light-theme .notification-dropdown .bg-emerald-500\/10 svg {
+  color: #10b981 !important;
+}
+
+/* Amber notifications: rgba(245,158,11,0.1) with #d97706 icon */
+.light-theme .notification-dropdown .text-amber-500,
+.light-theme .notification-dropdown .bg-amber-500\/10,
+.light-theme .notification-dropdown .text-yellow-500 {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+  color: #d97706 !important;
+  border-color: rgba(245, 158, 11, 0.2) !important;
+}
+.light-theme .notification-dropdown .text-amber-500 svg,
+.light-theme .notification-dropdown .bg-amber-500\/10 svg,
+.light-theme .notification-dropdown .text-yellow-500 svg {
+  color: #d97706 !important;
+}
+
+/* Red notifications: rgba(239,68,68,0.1) with #dc2626 icon */
+.light-theme .notification-dropdown .text-red-500,
+.light-theme .notification-dropdown .bg-red-500\/10 {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  color: #dc2626 !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
+}
+.light-theme .notification-dropdown .text-red-500 svg,
+.light-theme .notification-dropdown .bg-red-500\/10 svg {
+  color: #dc2626 !important;
+}
+
+/* ==========================================================
+   TrustLink Light Mode Specific Style Quick Fixes
+   ========================================================== */
+
+/* FIX 1 — PROFILE PHOTO UPLOAD BOX IN LIGHT MODE */
+.light-theme #profile-upload-box {
+  background-color: #ffffff !important;
+  border: 1.5px dashed #d4d4d8 !important;
+}
+
+.light-theme #profile-upload-box:hover {
+  border-color: #a1a1aa !important;
+}
+
+.light-theme #profile-upload-icon {
+  color: #a1a1aa !important;
+}
+
+.light-theme #profile-upload-box .profile-upload-text {
+  color: #71717a !important;
+}
+
+.light-theme #profile-upload-box .profile-upload-text .clickable-text {
+  color: #10b981 !important;
+}
+
+.light-theme #profile-upload-box .profile-upload-hint {
+  color: #a1a1aa !important;
+}
+
+.light-theme #delete-avatar-btn {
+  color: #ef4444 !important;
+  background-color: rgba(239, 68, 68, 0.06) !important;
+  border: 1px solid rgba(239, 68, 68, 0.15) !important;
+}
+
+.light-theme #delete-avatar-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+/* FIX 2 — SELECT ACTIVE PROFILE STICKER GRID IN LIGHT MODE */
+.light-theme #sticker-grid-container {
+  background-color: #fafafa !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+.light-theme .sticker-cell {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #e4e4e7 !important;
+  color: #18181b !important;
+}
+
+.light-theme .sticker-cell:hover {
+  background-color: #e4e4e7 !important;
+}
+
+.light-theme .sticker-cell-selected {
+  border: 2px solid #10b981 !important;
+  background-color: rgba(16, 185, 129, 0.08) !important;
+  color: #10b981 !important;
+}
+
+/* FIX 3 — NOTIFICATION BELL BUTTON IN LIGHT MODE */
+.light-theme #notification-bell-btn,
+.light-theme #mobile-search-btn,
+.light-theme #profile-trigger-btn {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+.light-theme #notification-bell-btn:hover,
+.light-theme #mobile-search-btn:hover,
+.light-theme #profile-trigger-btn:hover {
+  background-color: #e4e4e7 !important;
+}
+
+.light-theme #notification-bell-btn .bell-icon-element,
+.light-theme #mobile-search-btn .search-icon-element {
+  color: #52525b !important;
+}
+
+.light-theme #profile-trigger-btn .profile-user-name {
+  color: #52525b !important;
+}
+
+/* Notification count/indicator badge stays emerald #10b981 with white text regardless of theme */
+#notification-bell-btn .notification-badge {
+  background-color: #10b981 !important;
+}
+
+/* ==========================================================
+   TrustLink Buyer Escrow Console Light Mode Styles
+   ========================================================== */
+
+.light-theme #buyer-tracking-content {
+  color: #18181b !important;
+}
+
+.light-theme #buyer-header-card {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+}
+
+.light-theme #buyer-header-card h3 {
+  color: #18181b !important;
+}
+
+.light-theme #buyer-header-card .description-text {
+  color: #71717a !important;
+}
+
+.light-theme #buyer-transaction-select {
+  background-color: #ffffff !important;
+  border-color: #e4e4e7 !important;
+  color: #18181b !important;
+}
+
+/* Timeline card style cascade */
+.light-theme #buyer-timeline-card {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+}
+
+.light-theme #buyer-timeline-card .timeline-title {
+  color: #71717a !important;
+}
+
+.light-theme #timeline-track-bg {
+  background-color: #e4e4e7 !important;
+}
+
+.light-theme #timeline-track-progress {
+  background-color: #10b981 !important;
+}
+
+.light-theme .timeline-step-icon.step-active {
+  background-color: rgba(16, 185, 129, 0.08) !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+  color: #10b981 !important;
+}
+
+.light-theme .timeline-step-icon.step-inactive {
+  background-color: #d4d4d8 !important;
+  border-color: #e4e4e7 !important;
+  color: #a1a1aa !important;
+}
+
+.light-theme .timeline-step-title {
+  color: #18181b !important;
+}
+
+.light-theme .timeline-step-desc {
+  color: #71717a !important;
+}
+
+/* Status Index description card */
+.light-theme #state-index-info-card {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+.light-theme #state-index-info-card span,
+.light-theme #state-index-info-card p {
+  color: #52525b !important;
+}
+
+/* Action Control card style cascade */
+.light-theme #action-control-card {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+}
+
+.light-theme #action-control-card .action-control-title {
+  color: #71717a !important;
+}
+
+.light-theme #action-control-card div.bg-black {
+  background-color: #f4f4f5 !important;
+  border-color: #e4e4e7 !important;
+}
+
+.light-theme #action-control-card div.bg-black p {
+  color: #71717a !important;
+}
+
+.light-theme #action-control-card div.bg-black strong {
+  color: #18181b !important;
+}
+
+.light-theme #action-control-card button.bg-black {
+  background-color: #f4f4f5 !important;
+  color: #18181b !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+.light-theme #action-control-card button.bg-black:hover {
+  background-color: #e4e4e7 !important;
+}
+
+.light-theme #action-control-card .transit-status {
+  color: #10b981 !important;
+}
+
+/* Order Summary card style cascade */
+.light-theme #order-invoice-snapshot-card {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+}
+
+.light-theme #order-invoice-snapshot-card > span {
+  color: #71717a !important;
+}
+
+.light-theme #order-invoice-snapshot-card .bg-black {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+.light-theme #order-invoice-snapshot-card .bg-black span {
+  color: #18181b !important;
+}
+
+.light-theme #order-invoice-snapshot-card .bg-black span.text-\[9px\] {
+  color: #71717a !important;
+}
+
+.light-theme #order-invoice-snapshot-card .text-zinc-100,
+.light-theme #order-invoice-snapshot-card .text-zinc-200,
+.light-theme #order-invoice-snapshot-card .text-zinc-250 {
+  color: #18181b !important;
+}
+
+.light-theme #order-invoice-snapshot-card .text-zinc-400 {
+  color: #71717a !important;
+}
+
+.light-theme #order-invoice-snapshot-card .text-emerald-400 {
+  color: #10b981 !important;
+}
+
+
+/* ==========================================================
+   TrustLink Global Light Mode Enhancements OVERRIDES (FIX 4)
+   ========================================================== */
+
+/* 1. Dashboard Metric Cards & Payout Overview Cards */
+.light-theme .metric-card {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0px 4px 20px rgba(0,0,0,0.03) !important;
+}
+.light-theme .metric-card *,
+.light-theme .metric-card span,
+.light-theme .metric-card div,
+.light-theme .metric-card p {
+  opacity: 1 !important;
+}
+.light-theme .metric-card .text-white,
+.light-theme .metric-card .text-zinc-100,
+.light-theme .metric-card [class*="text-white"],
+.light-theme .metric-card [class*="text-zinc-[100]"],
+.light-theme .metric-card [class*="text-zinc-100"],
+.light-theme .metric-card .font-bold {
+  color: #18181b !important;
+}
+.light-theme .metric-card .text-zinc-400,
+.light-theme .metric-card .text-zinc-500,
+.light-theme .metric-card [class*="text-zinc bg-text"],
+.light-theme .metric-card [class*="text-zinc-400"],
+.light-theme .metric-card [class*="text-zinc-500"] {
+  color: #71717a !important;
+}
+
+/* 2. Transaction Tables & Payout Tables inside .table-container */
+.light-theme .table-container,
+.light-theme table {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+}
+.light-theme thead,
+.light-theme thead tr,
+.light-theme thead th,
+.light-theme .table-container thead tr {
+  background-color: #f9f9f9 !important;
+  border-bottom: 1px solid #e4e4e7 !important;
+  color: #71717a !important;
+}
+.light-theme tbody tr {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e4e4e7 !important;
+  opacity: 1 !important;
+}
+.light-theme tbody tr,
+.light-theme tbody tr *,
+.light-theme tbody tr td {
+  opacity: 1 !important;
+}
+.light-theme tbody tr:hover {
+  background-color: #f9f9f9 !important;
+}
+.light-theme tbody tr td {
+  color: #18181b !important;
+}
+.light-theme tbody tr td .text-zinc-200,
+.light-theme tbody tr td .text-zinc-100,
+.light-theme tbody tr td .text-white,
+.light-theme tbody tr td .font-semibold,
+.light-theme tbody tr td .font-bold {
+  color: #18181b !important;
+}
+.light-theme tbody tr td .text-zinc-500,
+.light-theme tbody tr td .text-zinc-400,
+.light-theme tbody tr td [class*="text-zinc-500"],
+.light-theme tbody tr td [class*="text-zinc-400"],
+.light-theme tbody tr td span.font-mono {
+  color: #71717a !important;
+}
+
+/* 3. Search input & filter dropdown (Search & Filter dropdown) */
+.light-theme input[type="text"],
+.light-theme select {
+  background-color: #ffffff !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #18181b !important;
+}
+.light-theme input[type="text"]::placeholder {
+  color: #a1a1aa !important;
+  opacity: 1 !important;
+}
+
+/* 4. Storefront Editor in Light Mode */
+.light-theme #private-store-editor-grid input,
+.light-theme #private-store-editor-grid select,
+.light-theme #private-store-editor-grid textarea {
+  background-color: #ffffff !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #18181b !important;
+}
+.light-theme #private-store-editor-grid ::placeholder,
+.light-theme #private-store-editor-grid input::placeholder,
+.light-theme #private-store-editor-grid select::placeholder,
+.light-theme #private-store-editor-grid textarea::placeholder {
+  color: #a1a1aa !important;
+  opacity: 1 !important;
+}
+/* Links and Socials active channel rows */
+.light-theme #private-store-editor-grid .bg-black\/40 {
+  background-color: #f9f9f9 !important;
+  border: 1px solid #e4e4e7 !important;
+}
+.light-theme #private-store-editor-grid .bg-zinc-900\/60 {
+  background-color: #f0f0f0 !important;
+  border: 1px solid #e4e4e7 !important;
+}
+.light-theme #private-store-editor-grid .text-zinc-200 {
+  color: #18181b !important;
+  opacity: 1 !important;
+}
+.light-theme #private-store-editor-grid .text-zinc-400 {
+  color: #71717a !important;
+  opacity: 1 !important;
+}
+
+/* 5. Getting Started phase cards */
+.light-theme #learning-hub-container .grid > div {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0px 4px 20px rgba(0,0,0,0.03) !important;
+}
+.light-theme #learning-hub-container .grid > div:hover {
+  border-color: #d4d4d8 !important;
+}
+/* Phase Number labels in #d4d4d8 */
+.light-theme #learning-hub-container .grid span[class*="font-mono"],
+.light-theme #learning-hub-container .grid span[class*="text-mono"],
+.light-theme #learning-hub-container .grid span[class*="text-[10px]"] {
+  border: 1px solid #d4d4d8 !important;
+  background-color: #ffffff !important;
+  color: #d4d4d8 !important;
+}
+.light-theme #learning-hub-container .grid span[class*="text-[#10b981]"] {
+  color: #10b981 !important;
+  background-color: rgba(16, 185, 129, 0.08) !important;
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+/* Card titles in #18181b */
+.light-theme #learning-hub-container .grid h4 {
+  color: #18181b !important;
+}
+/* Card body text in #52525b */
+.light-theme #learning-hub-container .grid p {
+  color: #52525b !important;
+}
+
+/* 6. Account Settings */
+.light-theme #settings-view-container input,
+.light-theme #settings-view-container select,
+.light-theme #settings-view-container textarea {
+  background-color: #ffffff !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #18181b !important;
+}
+.light-theme #settings-view-container input::placeholder,
+.light-theme #settings-view-container select::placeholder,
+.light-theme #settings-view-container textarea::placeholder {
+  color: #a1a1aa !important;
+  opacity: 1 !important;
+}
+/* Security covenant card inside settings must have #f0fdf4 BG and border rgba(16,185,129,0.2) */
+.light-theme #settings-view-container .p-3.bg-zinc-900\/40.border.border-zinc-800,
+.light-theme #settings-view-container .p-3.bg-zinc-900\/40.border {
+  background-color: #f0fdf4 !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+}
+.light-theme #settings-view-container .p-3.bg-zinc-900\/40.border *,
+.light-theme #settings-view-container .p-3.bg-zinc-900\/40.border-zinc-800 * {
+  color: #166534 !important;
+}
+
+/* 7. Notification panel override updates */
+.light-theme .notification-dropdown {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+.light-theme .notification-dropdown p {
+  color: #18181b !important;
+}
+.light-theme .notification-dropdown span.text-zinc-500 {
+  color: #71717a !important;
+}
+
+/* 8. Custom Referral Reward Promo Badge overrides for Light Mode & Dark Mode Gradients */
+#sidebar-referral-card {
+  background: linear-gradient(135deg, #022c22 0%, #000000 100%) !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  color: #10b981 !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#sidebar-referral-card .referral-title {
+  color: #34d399 !important;
+}
+
+#sidebar-referral-card .referral-desc {
+  color: #a1a1aa !important;
+}
+
+#sidebar-referral-card .referral-icon-bg {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+}
+
+#sidebar-referral-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.12) !important;
+}
+
+#sidebar-referral-card.active-referral-badge {
+  background: linear-gradient(135deg, #047857 0%, #000000 100%) !important;
+  border: 1.5px solid #10b981 !important;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.25) !important;
+}
+
+/* Light Theme specifically tuned variables and styles */
+.light-theme #sidebar-referral-card {
+  background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%) !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  color: #065f46 !important;
+}
+
+.light-theme #sidebar-referral-card .referral-title {
+  color: #065f46 !important;
+}
+
+.light-theme #sidebar-referral-card .referral-desc {
+  color: #047857 !important;
+}
+
+.light-theme #sidebar-referral-card .referral-divider {
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+.light-theme #sidebar-referral-card .referral-icon-bg {
+  background-color: #ecfdf5 !important;
+  color: #059669 !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+}
+
+.light-theme #sidebar-referral-card:hover {
+  background: linear-gradient(135deg, #d1fae5 0%, #ffffff 100%) !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08) !important;
+}
+
+.light-theme #sidebar-referral-card.active-referral-badge {
+  background: linear-gradient(135deg, #d1fae5 0%, #f0fdf4 100%) !important;
+  border: 1.5px solid #059669 !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12) !important;
+}
+
+/* Base custom interactive states */
+.animate-pulse-slow {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+

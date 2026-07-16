@@ -1,0 +1,6 @@
+{
+  "name": "Trova",
+  "description": "Trova Escrow-by-Link Social Commerce System. Create secure escrow payment links, track delivery progress, and disburse funds with absolute multi-party trust.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

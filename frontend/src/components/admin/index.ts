@@ -1,0 +1,12 @@
+export { AdminDashboard } from './AdminDashboard';
+export { AdminSidebar } from './AdminSidebar';
+export { OverviewTab } from './OverviewTab';
+export { TransactionsTab } from './TransactionsTab';
+export { DisputesTab } from './DisputesTab';
+export { PayoutsTab } from './PayoutsTab';
+export { MerchantRegistryTab } from './MerchantRegistryTab';
+export { UsersTab } from './UsersTab';
+export { KYCQueueTab } from './KYCQueueTab';
+export { HealthTab } from './HealthTab';
+export { AuditTab } from './AuditTab';
+export { GlobalSettingsTab } from './GlobalSettingsTab';

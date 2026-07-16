@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56" width="48" height="56">
+  <defs>
+    <linearGradient id="trovaMark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#065f46;stop-opacity:1"/>
+    </linearGradient>
+  </defs>
+  <path d="M4,2 L44,2 L44,38 L24,54 L4,38 Z" fill="url(#trovaMark)"/>
+  <polyline points="12,14 24,36 36,14" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="12" y1="14" x2="36" y2="14" stroke="white" stroke-width="4" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Trova Secure Escrow Payments</title>
+    <meta name="description" content="Trova is a global escrow payment platform. Sellers create secure payment links. Buyers pay safely. Funds release only when delivery is confirmed." />
+    <meta property="og:title" content="Trova — Secure Escrow Payments" />
+    <meta property="og:description" content="Create secure escrow payment links in seconds. Every sale protected. Every platform supported." />
+    <meta name="twitter:title" content="Trova — Secure Escrow Payments" />
+  </head>
+  <body class="bg-zinc-950 text-zinc-100">
+    <div id="root"></div>
+    
+    <!-- Early theme application to prevent flash/flicker on page load.
+         Route-aware: only the seller dashboard (/dashboard) and admin (/admin)
+         may inherit the persisted theme. Public / marketing / buyer pages are
+         always forced dark so they never inherit the dashboard theme. -->
+    <script>
+      (function() {
+        try {
+          const path = window.location.pathname || '/';
+          const isDashboardOrAdmin =
+            path === '/dashboard' ||
+            path.startsWith('/dashboard') ||
+            path.startsWith('/admin');
+          const theme = isDashboardOrAdmin
+            ? (localStorage.getItem('trustlink_theme') || 'dark')
+            : 'dark';
+
+          const htmlElement = document.documentElement;
+          const bodyElement = document.body;
+
+          htmlElement.classList.remove('light-theme', 'dark-theme');
+          bodyElement.classList.remove('light-theme', 'dark-theme');
+          bodyElement.style.backgroundColor = '';
+
+          if (theme === 'light' && isDashboardOrAdmin) {
+            htmlElement.classList.add('light-theme');
+            bodyElement.classList.add('light-theme');
+            bodyElement.style.backgroundColor = '#f4f4f5';
+          }
+        } catch (e) {
+          document.body.style.backgroundColor = '';
+        }
+      })();
+    </script>
+    
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
