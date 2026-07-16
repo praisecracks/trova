@@ -133,6 +133,34 @@ export async function updateTransactionStatus(
   }
 }
 
+// Permanently delete a transaction from the server (seller-only / admin).
+// This is the authoritative delete so later re-syncs cannot resurrect it.
+export async function deleteTransaction(
+  transactionId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { data, error } = await supabase.rpc('trova_delete_transaction', {
+      p_transaction_id: transactionId,
+    });
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    const result = data as { success: boolean; error?: string };
+    if (!result.success) {
+      return { success: false, error: result.error || 'Failed to delete transaction' };
+    }
+
+    return { success: true };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : 'Unknown error',
+    };
+  }
+}
+
 // Map Supabase snake_case row to camelCase Transaction interface
 function mapTransaction(row: Record<string, unknown>): Transaction {
   const status = normalizeStatus(row.status as string);

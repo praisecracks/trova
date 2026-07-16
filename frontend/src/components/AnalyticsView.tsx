@@ -224,11 +224,13 @@ export default function AnalyticsView({ escrowLinks, sellerId }: AnalyticsViewPr
       
       const weekLabel = i === 0 ? 'This Week' : `${i} wks ago`;
 
-      // Filter successful releases creating in this range
-      const weekReleases = resolvedTransactions.filter(l => {
-        const d = new Date(l.createdAt);
-        return d >= weekStart && d < weekEnd && ['funds_released', 'funds_released', 'funds_released'].includes(l.status);
-      });
+       // Filter successful releases that SETTLED (released) in this range.
+       // Use the settlement timestamp (updatedAt), not the creation date.
+       const weekReleases = resolvedTransactions.filter(l => {
+         if (!['funds_released'].includes(l.status)) return false;
+         const d = new Date(l.updatedAt || l.createdAt);
+         return d >= weekStart && d < weekEnd;
+       });
 
       const totalValue = weekReleases.reduce((sum, l) => sum + l.amount, 0);
 

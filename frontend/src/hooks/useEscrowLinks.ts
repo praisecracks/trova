@@ -1,23 +1,46 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { EscrowLink } from '../types';
-import { getSellerTransactions } from '../lib/services/transactions';
+import { getSellerTransactions, deleteTransaction } from '../lib/services/transactions';
 import { supabase } from '../lib/supabaseClient';
+
+const DELETED_IDS_KEY = 'trustlink_deleted_ids';
+
+const readDeletedIds = (): Set<string> => {
+  try {
+    const raw = localStorage.getItem(DELETED_IDS_KEY);
+    if (raw) return new Set(JSON.parse(raw) as string[]);
+  } catch (e) {}
+  return new Set();
+};
+
+const writeDeletedIds = (ids: Set<string>) => {
+  try {
+    localStorage.setItem(DELETED_IDS_KEY, JSON.stringify([...ids]));
+  } catch (e) {}
+};
+
+// Drop clearly-corrupted seed entries while keeping the user's real links.
+const sanitizeLinks = (links: EscrowLink[]): EscrowLink[] =>
+  links.filter(
+    lnk =>
+      lnk.description !== 'Verified secure items' &&
+      /^\+?[0-9\s-]+$/.test(lnk.buyerPhone || '')
+  );
+
+// Remove any links the user has permanently deleted (local or server-side)
+// so they never re-appear after a re-sync.
+const applyDeletedFilter = (links: EscrowLink[], deleted: Set<string>): EscrowLink[] =>
+  sanitizeLinks(links).filter(l => !deleted.has(l.id));
 
 export function useEscrowLinks(sellerId: string | null) {
   const [escrowLinks, setEscrowLinks] = useState<EscrowLink[]>(() => {
+    const deleted = readDeletedIds();
     try {
       const saved = localStorage.getItem('trustlink_escrow_links');
       if (saved) {
         const parsed = JSON.parse(saved) as EscrowLink[];
         if (Array.isArray(parsed)) {
-          // Keep valid links. An empty description is valid (most real
-          // transactions have none) — only drop clearly-corrupted entries so we
-          // never wipe the user's real escrow links.
-          const clean = parsed.filter(lnk =>
-            lnk.description !== 'Verified secure items' &&
-            /^\+?[0-9\s-]+$/.test(lnk.buyerPhone || '')
-          );
-          return clean;
+          return applyDeletedFilter(parsed, deleted);
         }
       }
     } catch (e) {}
@@ -26,6 +49,15 @@ export function useEscrowLinks(sellerId: string | null) {
 
   const [selectedLink, setSelectedLink] = useState<EscrowLink | null>(null);
 
+  // Persist the current list to localStorage, always stripping deleted IDs.
+  const persistLinks = useCallback((links: EscrowLink[]) => {
+    const deleted = readDeletedIds();
+    const next = applyDeletedFilter(links, deleted);
+    setEscrowLinks(next);
+    localStorage.setItem('trustlink_escrow_links', JSON.stringify(next));
+    window.dispatchEvent(new CustomEvent('trustlink_escrow_links_changed'));
+  }, []);
+
   useEffect(() => {
     if (!sellerId) return;
 
@@ -33,8 +65,7 @@ export function useEscrowLinks(sellerId: string | null) {
       try {
         const transactions = await getSellerTransactions(sellerId);
         if (transactions.length > 0) {
-          setEscrowLinks(transactions);
-          localStorage.setItem('trustlink_escrow_links', JSON.stringify(transactions));
+          persistLinks(transactions);
         }
       } catch (e) {
         // Offline or error: keep existing localStorage data
@@ -42,7 +73,7 @@ export function useEscrowLinks(sellerId: string | null) {
     };
 
     loadData();
-  }, [sellerId]);
+  }, [sellerId, persistLinks]);
 
   useEffect(() => {
     if (!sellerId) return;
@@ -61,6 +92,8 @@ export function useEscrowLinks(sellerId: string | null) {
         (payload) => {
           const updated = payload.new as any;
           setEscrowLinks(prev => {
+            const deleted = readDeletedIds();
+            if (deleted.has(updated.id)) return prev;
             const idx = prev.findIndex(l => l.id === updated.id);
             if (idx >= 0) {
               const next = [...prev];
@@ -95,8 +128,7 @@ export function useEscrowLinks(sellerId: string | null) {
       try {
         const transactions = await getSellerTransactions(sellerId);
         if (transactions.length > 0) {
-          setEscrowLinks(transactions);
-          localStorage.setItem('trustlink_escrow_links', JSON.stringify(transactions));
+          persistLinks(transactions);
         }
       } catch (e) {
         // Offline or error: keep existing localStorage data
@@ -116,23 +148,34 @@ export function useEscrowLinks(sellerId: string | null) {
       window.removeEventListener('focus', reconcile);
       clearInterval(heartbeat);
     };
-  }, [sellerId]);
+  }, [sellerId, persistLinks]);
 
   const updateEscrowLinks = (newLinks: EscrowLink[] | ((prev: EscrowLink[]) => EscrowLink[])) => {
     const resolved = typeof newLinks === 'function' ? newLinks(escrowLinks) : newLinks;
-    setEscrowLinks(resolved);
-    localStorage.setItem('trustlink_escrow_links', JSON.stringify(resolved));
-    window.dispatchEvent(new CustomEvent('trustlink_escrow_links_changed'));
+    persistLinks(resolved);
   };
 
-  // Permanently remove a link from the active list (used when a link is
-  // hard-deleted from Deleted History). Without this the link would still
-  // exist in the main escrow list and re-appear in the dashboard table.
+  // Permanently remove a link. Deletes it authoritatively on the server (so
+  // re-syncs can't resurrect it) and, as a safety net for offline/demo mode,
+  // records the ID in a local deleted-IDs set and removes it from the live
+  // list immediately.
   const removeEscrowLink = (linkId: string) => {
-    const resolved = escrowLinks.filter(l => l.id !== linkId);
-    setEscrowLinks(resolved);
-    localStorage.setItem('trustlink_escrow_links', JSON.stringify(resolved));
+    const deleted = readDeletedIds();
+    deleted.add(linkId);
+    writeDeletedIds(deleted);
+
+    const next = escrowLinks.filter(l => l.id !== linkId);
+    setEscrowLinks(next);
+    localStorage.setItem('trustlink_escrow_links', JSON.stringify(next));
     window.dispatchEvent(new CustomEvent('trustlink_escrow_links_changed'));
+    // Notify the dashboard so its deleted-IDs filter updates immediately.
+    window.dispatchEvent(new CustomEvent('trustlink_deleted_links_update'));
+
+    // Authoritative server-side delete (best effort; ignore failure so the
+    // local removal still happens when Supabase is unreachable).
+    deleteTransaction(linkId).catch((err) => {
+      console.warn('[useEscrowLinks] server delete failed (kept local delete):', err);
+    });
   };
 
   const pendingDeliveries = escrowLinks.filter(l => l.status === 'delivered').length;

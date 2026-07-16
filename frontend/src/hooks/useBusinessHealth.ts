@@ -52,7 +52,9 @@ export function useBusinessHealth(escrowLinks: EscrowLink[]): BusinessHealthMetr
       return link?.currencySymbol || '₦';
     })();
 
-    const todayRevenue = sumAmount(escrowLinks, l => l.status === 'funds_released' && isToday(l.createdAt));
+    // Revenue is earned when funds are RELEASED (settled), so use the
+    // settlement timestamp (updatedAt), not the link creation date.
+    const todayRevenue = sumAmount(escrowLinks, l => l.status === 'funds_released' && isToday(l.updatedAt || l.createdAt));
     const lockedInEscrow = sumAmount(escrowLinks, l => ['pending_deposit', 'deposited'].includes(l.status));
     const moneyWaiting = sumAmount(escrowLinks, l => l.status === 'deposited');
     const pendingCount = countStatus(escrowLinks, ['pending_deposit']);
@@ -62,7 +64,7 @@ export function useBusinessHealth(escrowLinks: EscrowLink[]): BusinessHealthMetr
     const successRate = totalTransactions > 0 ? Math.round((completedCount / totalTransactions) * 100) : 0;
     const averageOrderValue = completedCount > 0 ? Math.round((sumAmount(escrowLinks, l => l.status === 'funds_released') / completedCount)) : 0;
 
-    const prevTodayRevenue = sumAmount(escrowLinks, l => l.status === 'funds_released' && isWithinDays(l.createdAt, 1, 2));
+    const prevTodayRevenue = sumAmount(escrowLinks, l => l.status === 'funds_released' && isWithinDays(l.updatedAt || l.createdAt, 1, 2));
     const prevLockedInEscrow = sumAmount(escrowLinks, l => ['pending_deposit', 'deposited'].includes(l.status) && isWithinDays(l.createdAt, 7, 14));
     const prevMoneyWaiting = sumAmount(escrowLinks, l => l.status === 'deposited' && isWithinDays(l.createdAt, 7, 14));
     const prevPendingCount = countStatus(escrowLinks, ['pending_deposit']) === pendingCount ? 0 : pendingCount;

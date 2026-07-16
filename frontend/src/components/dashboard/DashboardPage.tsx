@@ -56,6 +56,15 @@ export default function DashboardPage({
   });
 
   // Keep the deleted list in sync when links are permanently removed from Deleted History.
+  const [deletedIds, setDeletedIds] = React.useState<Set<string>>(() => {
+    try {
+      const raw = localStorage.getItem('trustlink_deleted_ids');
+      return raw ? new Set(JSON.parse(raw) as string[]) : new Set();
+    } catch (e) {
+      return new Set();
+    }
+  });
+
   React.useEffect(() => {
     const syncDeleted = () => {
       try {
@@ -63,6 +72,12 @@ export default function DashboardPage({
         setDeletedLinks(saved ? JSON.parse(saved) : []);
       } catch (e) {
         setDeletedLinks([]);
+      }
+      try {
+        const raw = localStorage.getItem('trustlink_deleted_ids');
+        setDeletedIds(raw ? new Set(JSON.parse(raw) as string[]) : new Set());
+      } catch (e) {
+        setDeletedIds(new Set());
       }
     };
     window.addEventListener('trustlink_deleted_links_update', syncDeleted);
@@ -153,8 +168,9 @@ export default function DashboardPage({
       link.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       link.buyerPhone.includes(searchTerm);
     
-    if (statusFilter === 'all') return matchesSearch && !deletedLinks.find(d => d.id === link.id);
-    return matchesSearch && link.status === statusFilter && !deletedLinks.find(d => d.id === link.id);
+    const isDeleted = deletedLinks.find(d => d.id === link.id) || deletedIds.has(link.id);
+    if (statusFilter === 'all') return matchesSearch && !isDeleted;
+    return matchesSearch && link.status === statusFilter && !isDeleted;
   });
 
   // Export current list of filtered escrow links and their statuses into a CSV format
